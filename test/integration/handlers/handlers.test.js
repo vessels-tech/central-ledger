@@ -485,6 +485,8 @@ Test('Handlers test', async handlersTest => {
       test.end()
     })
 
+    await transferAbort.test(`update transfer state to ABORTED when PUT /transfers/{id} contains an incorrect`)
+
     await transferAbort.test(`update transfer state to ABORTED_ERROR by PUT /transfers/{id}/error endpoint`, async (test) => {
       const config = Utility.getKafkaConfig(
         Utility.ENUMS.PRODUCER,
