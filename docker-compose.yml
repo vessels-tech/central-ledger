@@ -30,12 +30,13 @@ services:
     image: johnnypark/kafka-zookeeper
     container_name: kafka
     # This just make sure kafka doesn't log anything, as it is far too verbose
-    logging:
-      driver: none
+    # logging:
+      # driver: none
     ports:
       - "2181:2181"
       - "9092:9092"
     environment:
-      - ADVERTISED_HOST=kafka
+      # - ADVERTISED_HOST=kafka
+      - ADVERTISED_HOST=localhost
       - KAFKA_LOG4J_ROOT_LOGLEVEL=WARN
       - KAFKA_TOOLS_LOG4J_LOGLEVEL=ERROR
