@@ -161,10 +161,13 @@ const prepare = async (error, messages) => {
         return await Util.proceed(params, { consumerCommit, histTimerEnd, errorInformation, producer, fromSwitch })
       }
       Logger.info(Util.breadcrumb(location, `positionTopic1--${actionLetter}6`))
+      //LEWIS_DEBUG
       // Perhaps action isn't properly being set here? we could try and revert to action: TransferEventAction.PREPARE
-      Logger.debug(`action is: ${action}`)
+      Logger.debug(`LD action is: ${action}`)
+      Logger.debug(`LD action should be: ${TransferEventAction.PREPARE}`)
       // const producer = { functionality: TransferEventType.POSITION, action }
-      const producer = { functionality: TransferEventType.POSITION, action: TransferEventAction.PREPARE }
+      // const producer = { functionality: TransferEventType.POSITION, action: TransferEventAction.PREPARE }
+      const producer = { functionality: TransferEventType.POSITION, action }
 
       // const producer = { functionality: TransferEventType.POSITION, action }
       return await Util.proceed(params, { consumerCommit, histTimerEnd, producer, toDestination })
@@ -400,7 +403,7 @@ const getTransfer = async (error, messages) => {
     const metadata = message.value.metadata
     const action = metadata.event.action
     const transferId = message.value.content.uriParams.id
-    
+    // LEWIS_DEBUG
     Logger.debug(`getTransfer oldTransferId (message.value.id): ${message.value.id}, newTransferId: ${message.value.content.uriParams.id}`)
 
     const kafkaTopic = message.topic
