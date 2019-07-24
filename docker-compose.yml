@@ -13,7 +13,9 @@ services:
     ports:
       - "3001:3001"
     volumes:
-       - ./docker/central-ledger/default.json:/opt/central-ledger/config/default.json
+      - ./docker/central-ledger/default.json:/opt/central-ledger/config/default.json
+      - ./test:/opt/central-ledger/test
+      - ./src:/opt/central-ledger/src
     environment:
       - CLEDG_DATABASE_URI=mysql://central_ledger:password@mysql:3306/central_ledger
       - CLEDG_SIDECAR__DISABLED=true
@@ -24,8 +26,11 @@ services:
     container_name: cl_ml-api-adapter
     links:
       - kafka
+      - simulator
     ports:
       - "3000:3000"
+    environment:
+      - LOG_LEVEL=debug
     volumes:
       - ./docker/ml-api-adapter/default.json:/opt/ml-api-adapter/config/default.json
     environment:
@@ -78,4 +83,12 @@ services:
       - "2181:2181"
       - "9092:9092"
     environment:
-      - ZOO_LOG4J_PROP=WARN
+      - ZOO_LOG4J_PROP=DEBUG
+
+  simulator:
+    image: mojaloop/simulator:latest
+    container_name: cl_simulator
+    ports:
+      - "8444:8444"
+    environment:
+      - LOG_LEVEL=debug
