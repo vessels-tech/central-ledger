@@ -21,9 +21,32 @@ services:
       - CLEDG_SIDECAR__DISABLED=true
       - CLEDG_MONGODB__DISABLED=true
 
+  # ml-api-adapter:
+  #   # image: mojaloop/ml-api-adapter:latest
+  #   image: mojaloop/ml-api-adapter:v7.1.0
+  #   container_name: cl_ml-api-adapter
+  #   links:
+  #     - kafka
+  #     - simulator
+  #   ports:
+  #     - "3000:3000"
+  #   # environment:
+  #     # - LOG_LEVEL=debug
+  #   volumes:
+  #     - ./docker/ml-api-adapter/default.json:/opt/ml-api-adapter/config/default.json
+    
+  #   # TODO: we should be able to remove this - I think the image command is broken
+  #   command:
+  #     - "node"
+  #     - "src/api/index.js"
+
   ml-api-adapter:
-    image: mojaloop/ml-api-adapter:latest
-    container_name: cl_ml-api-adapter
+    build:
+      context: ../ml-api-adapter/
+      cache_from: 
+        - mojaloop/ml-api-adapter:latest
+        - ml-api-adapter
+    container_name: cl_ml-api-adapter-local
     links:
       - kafka
       - simulator
@@ -33,10 +56,13 @@ services:
       # - LOG_LEVEL=debug
     volumes:
       - ./docker/ml-api-adapter/default.json:/opt/ml-api-adapter/config/default.json
+      - ../ml-api-adapter/test:/opt/ml-api-adapter/test
+      - ../ml-api-adapter/src:/opt/ml-api-adapter/src
     
     # TODO: we should be able to remove this - I think the image command is broken
     command:
       - "node"
+      # - "nodemon"
       - "src/api/index.js"
 
   mysql:

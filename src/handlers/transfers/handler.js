@@ -131,16 +131,14 @@ const prepare = async (error, messages) => {
         const producer = { functionality: TransferEventType.NOTIFICATION, action: TransferEventAction.PREPARE }
         return await Util.proceed(params, { consumerCommit, histTimerEnd, errorInformation, producer, fromSwitch })
       } else if (transferStateEnum === TransferStateEnum.COMMITTED || transferStateEnum === TransferStateEnum.ABORTED) {
-        //LD this callback as an incorrect `fspiop-source` of payee
+        //LD_DEBUG this callback as an incorrect `fspiop-source` of payee
         Logger.info(Util.breadcrumb(location, `callbackFinilized1--${actionLetter}2`))
         const record = await TransferService.getById(transferId)
         message.value.content.payload = TransferObjectTransform.toFulfil(record)
         const producer = { functionality: TransferEventType.NOTIFICATION, action: TransferEventAction.PREPARE_DUPLICATE }
 
-        console.log('record is', record)
-        console.log('message.value.content.payload is', message.value.content.payload)
-        console.log('fromSwitch', fromSwitch)
-
+        //LD_DEBUG Temporary measure to test if this fix works:
+        message.value.content.uriParams = { id: transferId }
 
         return await Util.proceed(params, { consumerCommit, histTimerEnd, producer, fromSwitch })
       } else if (transferStateEnum === TransferStateEnum.RECEIVED || transferStateEnum === TransferStateEnum.RESERVED) {
