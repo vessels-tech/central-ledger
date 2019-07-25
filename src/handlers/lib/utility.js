@@ -506,8 +506,6 @@ const proceed = async (params, opts) => {
   const { consumerCommit, histTimerEnd, errorInformation, producer, fromSwitch, toDestination } = opts
   let metadataState
 
-  console.log("LD_DEBUG: proceed, message.value.content is", message.value.content)
-
     if (consumerCommit) {
     await commitMessageSync(kafkaTopic, consumer, message)
   }
@@ -526,14 +524,12 @@ const proceed = async (params, opts) => {
     message.value.to = message.value.from
     message.value.from = Enum.headers.FSPIOP.SWITCH
 
-    //LD_DEBUG: should this also set the `fspiop-source` header?
+    //LD_DEBUG: should this also set the `fspiop-source` header? - don't think we actually need this
     // message.value.content.headers[Enum.headers.FSPIOP.SOURCE] = Enum.headers.FSPIOP.SWITCH
   }
   if (producer) {
     const p = producer
     const key = toDestination && message.value.content.headers[Enum.headers.FSPIOP.DESTINATION]
-
-    console.log('proceed, message.value', message.value)
 
     await produceGeneralMessage(p.functionality, p.action, message.value, metadataState, key)
   }
