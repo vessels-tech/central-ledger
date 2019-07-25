@@ -105,6 +105,9 @@ const prepare = async (error, messages) => {
     const transferId = payload.transferId
     const kafkaTopic = message.topic
     let consumer
+
+    //LD_DEBUG this is where the duplicate handler starts - I think the bug is in ml-api-adapter...
+
     Logger.info(Util.breadcrumb(location, { method: 'prepare' }))
     try {
       consumer = Kafka.Consumer.getConsumer(kafkaTopic)
@@ -135,9 +138,6 @@ const prepare = async (error, messages) => {
         const record = await TransferService.getById(transferId)
         message.value.content.payload = TransferObjectTransform.toFulfil(record)
         const producer = { functionality: TransferEventType.NOTIFICATION, action: TransferEventAction.PREPARE_DUPLICATE }
-
-        //LD_DEBUG Temporary measure to test if this fix works:
-        message.value.content.uriParams = { id: transferId }
 
         return await Util.proceed(params, { consumerCommit, histTimerEnd, producer, fromSwitch })
       } else if (transferStateEnum === TransferStateEnum.RECEIVED || transferStateEnum === TransferStateEnum.RESERVED) {
