@@ -104,6 +104,7 @@ const prepareChangeParticipantPositionTransaction = async (transferList) => {
         // Note: see optimisation decision notes to understand the justification for the algorithm
         const participantLimit = await participantFacade.getParticipantLimitByParticipantCurrencyLimit(participantCurrency.participantId, participantCurrency.currencyId, Enum.LedgerAccountType.POSITION, Enum.ParticipantLimitType.NET_DEBIT_CAP)
         let availablePosition = participantLimit.value - effectivePosition
+        console.log("AVAILABLE POSITION IS", availablePosition)
         /* Validate entire batch if availablePosition >= sumTransfersInBatch - the impact is that applying per transfer rules would require to be handled differently
            since further rules are expected we do not do this at this point
            As we enter this next step the order in which the transfer is processed against the Position is critical.

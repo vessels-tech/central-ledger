@@ -131,10 +131,17 @@ const prepare = async (error, messages) => {
         const producer = { functionality: TransferEventType.NOTIFICATION, action: TransferEventAction.PREPARE }
         return await Util.proceed(params, { consumerCommit, histTimerEnd, errorInformation, producer, fromSwitch })
       } else if (transferStateEnum === TransferStateEnum.COMMITTED || transferStateEnum === TransferStateEnum.ABORTED) {
+        //LD this callback as an incorrect `fspiop-source` of payee
         Logger.info(Util.breadcrumb(location, `callbackFinilized1--${actionLetter}2`))
         const record = await TransferService.getById(transferId)
         message.value.content.payload = TransferObjectTransform.toFulfil(record)
         const producer = { functionality: TransferEventType.NOTIFICATION, action: TransferEventAction.PREPARE_DUPLICATE }
+
+        console.log('record is', record)
+        console.log('message.value.content.payload is', message.value.content.payload)
+        console.log('fromSwitch', fromSwitch)
+
+
         return await Util.proceed(params, { consumerCommit, histTimerEnd, producer, fromSwitch })
       } else if (transferStateEnum === TransferStateEnum.RECEIVED || transferStateEnum === TransferStateEnum.RESERVED) {
         Logger.info(Util.breadcrumb(location, `inProgress1--${actionLetter}3`))
@@ -299,6 +306,8 @@ const fulfil = async (error, messages) => {
 
     if (message.value.metadata.event.type === TransferEventType.FULFIL && [TransferEventAction.COMMIT, TransferEventAction.REJECT, TransferEventAction.ABORT, TransferEventAction.BULK_COMMIT].includes(action)) {
       const existingTransfer = await TransferService.getById(transferId)
+      console.log("TRANSFER ID is", transferId)
+      console.log("existingTransfer is", existingTransfer)
       Util.breadcrumb(location, { path: 'validationFailed' })
       if (!existingTransfer) {
         Logger.info(Util.breadcrumb(location, `callbackErrorNotFound--${actionLetter}6`))
@@ -326,6 +335,7 @@ const fulfil = async (error, messages) => {
         const producer = { functionality: TransferEventType.NOTIFICATION, action: TransferEventAction.COMMIT }
         return await Util.proceed(params, { consumerCommit, histTimerEnd, errorInformation, producer, fromSwitch })
       } else if (existingTransfer.expirationDate <= new Date()) {
+        console.log("EXPIRED: date:", existingTransfer.expirationDate)
         Logger.info(Util.breadcrumb(location, `callbackErrorTransferExpired--${actionLetter}11`))
         const errorInformation = Errors.getErrorInformation(errorType.transferExpired)
         const producer = { functionality: TransferEventType.NOTIFICATION, action: TransferEventAction.COMMIT }

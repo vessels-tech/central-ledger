@@ -29,12 +29,10 @@ services:
       - simulator
     ports:
       - "3000:3000"
-    environment:
-      - LOG_LEVEL=debug
+    # environment:
+      # - LOG_LEVEL=debug
     volumes:
       - ./docker/ml-api-adapter/default.json:/opt/ml-api-adapter/config/default.json
-    environment:
-      - LOG_LEVEL=debug
     
     # TODO: we should be able to remove this - I think the image command is broken
     command:
@@ -88,7 +86,12 @@ services:
   simulator:
     image: mojaloop/simulator:latest
     container_name: cl_simulator
+    # links:
+      # - ml-api-adapter
     ports:
       - "8444:8444"
     environment:
       - LOG_LEVEL=debug
+      - PARTIES_ENDPOINT=http://ml-api-adapter:3000
+      - QUOTES_ENDPOINT=http://ml-api-adapter:3000
+      - TRANSFERS_ENDPOINT=http://ml-api-adapter:3000

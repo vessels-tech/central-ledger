@@ -523,10 +523,15 @@ const proceed = async (params, opts) => {
   if (fromSwitch) {
     message.value.to = message.value.from
     message.value.from = Enum.headers.FSPIOP.SWITCH
+    //LD: should this also set the `fspiop-source` header?
+    message.value.content.headers[Enum.headers.FSPIOP.SOURCE] = Enum.headers.FSPIOP.SWITCH
   }
   if (producer) {
     const p = producer
     const key = toDestination && message.value.content.headers[Enum.headers.FSPIOP.DESTINATION]
+
+    console.log('proceed, message.value', message.value)
+
     await produceGeneralMessage(p.functionality, p.action, message.value, metadataState, key)
   }
   if (histTimerEnd && typeof histTimerEnd === 'function') {
