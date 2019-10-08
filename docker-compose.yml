@@ -120,7 +120,8 @@ services:
     networks:
       - cl-mojaloop-net
     healthcheck:
-      test: ["CMD" ,"/opt/kafka_2.12-2.3.0/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:29092"]
+      # test: ["CMD" ,"/opt/kafka_2.12-2.3.0/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:29092"]
+      test: /opt/kafka_2.12-2.3.0/bin/kafka-broker-api-versions.sh --bootstrap-server kafka:29092
       timeout: 20s
       retries: 10
       start_period: 40s
