@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  central-ledger:
+  central-ledger-int:
     build:
       dockerfile: test-integration.Dockerfile
       context: .
@@ -8,21 +8,16 @@ services:
         - mojaloop/central-ledger
         - central-ledger
         - central-ledger:test
-    container_name: cl_central-ledger
-    links:
-      - mysql
-      - kafka
-    ports:
-      - "3001:3001"
+    container_name: cl_central-ledger-int
     volumes:
-      - ./docker/central-ledger/default.json:/opt/central-ledger/config/default.json
+      - ./test/integration-config.json:/opt/central-ledger/config/default.json
       - ./test:/opt/central-ledger/test
       - ./src:/opt/central-ledger/src
       # - ./node_modules:/opt/central-ledger/node_modules
-    environment:
-      - CLEDG_DATABASE_URI=mysql://central_ledger:password@mysql:3306/central_ledger
-      - CLEDG_SIDECAR__DISABLED=true
-      - CLEDG_MONGODB__DISABLED=true
+    # environment:
+      # - CLEDG_DATABASE_URI=mysql://central_ledger:password@mysql:3306/central_ledger
+      # - CLEDG_SIDECAR__DISABLED=true
+      # - CLEDG_MONGODB__DISABLED=true
     command:
       - tail 
       - -f 

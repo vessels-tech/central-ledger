@@ -64,9 +64,6 @@ services:
   mysql:
     image: mysql/mysql-server
     container_name: cl_mysql
-    # Disable logging as it is far too verbose for debugging locally
-    logging:
-      driver: none
     ports:
       - "3306:3306"
     volumes:
@@ -113,9 +110,6 @@ services:
   kafka:
     image: johnnypark/kafka-zookeeper:2.3.0
     container_name: cl_kafka
-    # Disable logging as it is far too verbose for debugging locally
-    logging:
-      driver: none
     volumes:
       - ./docker/kafka/:/opt/kafka_2.12-2.3.0/config/
     ports:
@@ -126,7 +120,7 @@ services:
     networks:
       - cl-mojaloop-net
     healthcheck:
-      test: ["CMD" ,"/opt/kafka_2.12-2.3.0/bin/kafka-broker-api-versions.sh","--bootstrap-server","localhost:9092"]
+      test: ["CMD" ,"/opt/kafka_2.12-2.3.0/bin/kafka-broker-api-versions.sh","--bootstrap-server","kafka:29092"]
       timeout: 20s
       retries: 10
       start_period: 40s
@@ -135,15 +129,12 @@ services:
   objstore:
     image: mongo:latest
     container_name: cl_objstore
-    # Disable logging as it is far too verbose for debugging locally
-    logging:
-      driver: none
     ports:
       - "27017:27017"
     networks:
       - cl-mojaloop-net
     healthcheck:
-      test: mongo localhost:27017/test --quiet 1
+      test: mongo --quiet localhost:27017/test
       interval: 10s
       timeout: 10s
       retries: 5
